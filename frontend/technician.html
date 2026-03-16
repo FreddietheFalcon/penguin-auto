@@ -257,9 +257,26 @@ async function loadPartsForJob(repairId) {
   } catch(e) {}
 }
 
+// Build only the fields the API controller expects
+function repairPayload(r, overrides = {}) {
+  return {
+    vehicle_id:     r.vehicle_id,
+    employee_id:    r.employee_id,
+    service_id:     r.service_id,
+    scheduled_date: r.scheduled_date,
+    scheduled_time: r.scheduled_time,
+    status:         r.status,
+    completion_date: r.completion_date || null,
+    notes:          r.notes || null,
+    labor_hours:    r.labor_hours || null,
+    ...overrides
+  };
+}
+
 async function startJob(repairId) {
   const r = allJobs.find(x=>x.repair_id===repairId);
-  await fetch(`${API}/repairs/${repairId}`, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({...r, status:'In Progress'}) });
+  const res = await fetch(`${API}/repairs/${repairId}`, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(repairPayload(r, {status:'In Progress'})) });
+  if (!res.ok) { const err = await res.json(); alert('Error: ' + err.message); return; }
   loadJobs();
 }
 
@@ -267,7 +284,8 @@ async function saveNotes(repairId) {
   const r     = allJobs.find(x=>x.repair_id===repairId);
   const notes = document.getElementById(`notes-${repairId}`).value;
   const hours = parseFloat(document.getElementById(`hours-${repairId}`).value) || null;
-  await fetch(`${API}/repairs/${repairId}`, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({...r, notes, labor_hours:hours}) });
+  const res = await fetch(`${API}/repairs/${repairId}`, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(repairPayload(r, {notes, labor_hours:hours})) });
+  if (!res.ok) { alert('Error saving notes.'); return; }
   alert('✅ Notes saved!');
 }
 
@@ -275,7 +293,8 @@ async function completeJob(repairId) {
   const r     = allJobs.find(x=>x.repair_id===repairId);
   const notes = document.getElementById(`notes-${repairId}`).value;
   const hours = parseFloat(document.getElementById(`hours-${repairId}`).value) || null;
-  await fetch(`${API}/repairs/${repairId}`, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({...r, status:'Completed', completion_date: new Date().toISOString().split('T')[0], notes, labor_hours:hours}) });
+  const res = await fetch(`${API}/repairs/${repairId}`, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(repairPayload(r, {status:'Completed', completion_date: new Date().toISOString().split('T')[0], notes, labor_hours:hours})) });
+  if (!res.ok) { alert('Error completing job.'); return; }
   loadJobs();
 }
 
