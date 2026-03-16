@@ -65,7 +65,11 @@ body { font-family: 'Nunito', sans-serif; background: #f0f2f5; color: #1a1a2e; }
 .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
 @media (max-width: 700px) { .stats { grid-template-columns: repeat(2,1fr); } }
 </style>
-<script src="api.js"></script>
+<script>
+const API = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? 'http://localhost:5001/api'
+  : window.location.origin + '/api';
+</script>
 </head>
 <body>
 <header class="header">
