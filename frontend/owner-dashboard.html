@@ -211,10 +211,18 @@ async function assignTech(repairId, employeeId) {
   loadRepairs();
 }
 
+function cleanDate(d) { if(!d) return null; return d.substring(0,10); }
+function cleanTime(t) { if(!t) return '09:00'; return t.substring(0,5); }
+function repairPayload(r, overrides={}) {
+  return { vehicle_id:r.vehicle_id, employee_id:r.employee_id||null, service_id:r.service_id,
+    scheduled_date:cleanDate(r.scheduled_date), scheduled_time:cleanTime(r.scheduled_time),
+    status:r.status, completion_date:r.completion_date?cleanDate(r.completion_date):null,
+    notes:r.notes||null, labor_hours:r.labor_hours||null, ...overrides };
+}
 async function markComplete(repairId) {
   const r = allRepairs.find(x=>x.repair_id===repairId);
   await fetch(`${API}/repairs/${repairId}`, { method:'PUT', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({...r, status:'Completed', completion_date: new Date().toISOString().split('T')[0]}) });
+    body: JSON.stringify(repairPayload(r, {status:'Completed', completion_date: new Date().toISOString().split('T')[0]})) });
   loadRepairs();
 }
 

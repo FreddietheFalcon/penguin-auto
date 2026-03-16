@@ -262,17 +262,29 @@ async function loadPartsForJob(repairId) {
 }
 
 // Build only the fields the API controller expects
+// Clean date/time formats since MySQL returns them differently
+function cleanDate(d) {
+  if (!d) return null;
+  // Handle ISO string like "2026-03-15T00:00:00.000Z"
+  return d.substring(0, 10);
+}
+function cleanTime(t) {
+  if (!t) return '09:00';
+  // Handle time string like "13:00:00"
+  return t.substring(0, 5);
+}
+
 function repairPayload(r, overrides = {}) {
   return {
-    vehicle_id:     r.vehicle_id,
-    employee_id:    r.employee_id,
-    service_id:     r.service_id,
-    scheduled_date: r.scheduled_date,
-    scheduled_time: r.scheduled_time,
-    status:         r.status,
-    completion_date: r.completion_date || null,
-    notes:          r.notes || null,
-    labor_hours:    r.labor_hours || null,
+    vehicle_id:      r.vehicle_id,
+    employee_id:     r.employee_id || null,
+    service_id:      r.service_id,
+    scheduled_date:  cleanDate(r.scheduled_date),
+    scheduled_time:  cleanTime(r.scheduled_time),
+    status:          r.status,
+    completion_date: r.completion_date ? cleanDate(r.completion_date) : null,
+    notes:           r.notes || null,
+    labor_hours:     r.labor_hours || null,
     ...overrides
   };
 }
