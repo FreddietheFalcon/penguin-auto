@@ -1,7 +1,7 @@
 {
-  "name": "backend",
+  "name": "penguin-auto-backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "Penguin Auto Specialists - Backend API",
   "main": "src/server.js",
   "scripts": {
     "dev": "nodemon src/server.js",
@@ -17,7 +17,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^4.18.2",
-    "mongoose": "^8.14.3"
+    "mysql2": "^3.9.7"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"

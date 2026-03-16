@@ -1,19 +1,18 @@
 import ratelimit from "../config/upstash.js";
 
 const rateLimiter = async (req, res, next) => {
-
     try {
-        const { success } = await ratelimit.limit("my-limit-key");
+        const { success } = await ratelimit.limit("penguin-auto-limit");
         if (!success) {
             return res.status(429).json({
-                 message: "Too many requests, please try again later",
+                message: "Too many requests, please try again later",
             });
-  }       
-    next()
+        }
+        next();
     } catch (error) {
-        console.log("Rate limit error", error);
+        console.error("Rate limit error", error);
         next(error);
     }
-    };
+};
 
-    export default rateLimiter;
+export default rateLimiter;

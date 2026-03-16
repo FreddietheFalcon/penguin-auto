@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Penguin Auto — Parts Inventory</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Nunito', sans-serif; background: #f0f2f5; color: #1a1a2e; }
+.header { background: #4a7fd4; height: 58px; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; box-shadow: 0 2px 12px rgba(74,127,212,.35); }
+.logo { font-size: 18px; font-weight: 800; color: #fff; }
+.h-right { display: flex; align-items: center; gap: 10px; }
+.h-avatar { width: 32px; height: 32px; background: rgba(255,255,255,.25); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: #fff; }
+.h-name { font-size: 13px; font-weight: 700; color: rgba(255,255,255,.9); }
+.h-logout { background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.3); color: #fff; padding: 4px 12px; border-radius: 7px; font-size: 12px; font-weight: 700; font-family: 'Nunito', sans-serif; cursor: pointer; }
+.h-role { background: rgba(255,255,255,.25); padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 800; color: #fff; }
+.wrap { max-width: 1100px; margin: 0 auto; padding: 36px 24px; }
+.pg-head { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 28px; }
+.pg-title { font-size: 24px; font-weight: 800; }
+.pg-sub { font-size: 13px; color: #888; margin-top: 3px; }
+.stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 22px; }
+.stat { background: #fff; border-radius: 14px; padding: 22px 18px; text-align: center; box-shadow: 0 1px 8px rgba(0,0,0,.07); }
+.stat-icon { font-size: 28px; margin-bottom: 8px; }
+.stat-num { font-size: 30px; font-weight: 800; }
+.stat-lbl { font-size: 12px; color: #888; font-weight: 700; margin-top: 5px; text-transform: uppercase; letter-spacing: .4px; }
+.card { background: #fff; border-radius: 14px; padding: 22px; box-shadow: 0 1px 8px rgba(0,0,0,.07); margin-bottom: 22px; }
+.card-title { font-size: 14px; font-weight: 800; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1.5px solid #f0f2f5; display: flex; justify-content: space-between; align-items: center; }
+.search-bar { margin-bottom: 14px; }
+.search-input { width: 100%; padding: 10px 16px; border-radius: 10px; border: 1.5px solid #e0e0e0; font-size: 14px; font-family: 'Nunito', sans-serif; }
+.search-input:focus { outline: none; border-color: #4a7fd4; }
+.filter-tabs { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
+.tab { padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 800; font-family: 'Nunito', sans-serif; cursor: pointer; border: 1.5px solid #e0e0e0; background: #fff; color: #888; transition: all .2s; }
+.tab.active { background: #4a7fd4; color: #fff; border-color: #4a7fd4; }
+.tab:hover:not(.active) { border-color: #4a7fd4; color: #4a7fd4; }
+.parts-table { width: 100%; border-collapse: collapse; }
+.parts-table th { font-size: 11px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: .4px; padding: 0 12px 12px 0; text-align: left; border-bottom: 1.5px solid #f0f2f5; }
+.parts-table td { padding: 14px 12px 14px 0; border-bottom: 1px solid #f0f2f5; font-size: 13px; vertical-align: middle; }
+.parts-table tr:last-child td { border-bottom: none; }
+.parts-table tr:hover td { background: #fafbff; }
+.part-name { font-weight: 800; }
+.part-num { font-size: 11px; color: #aaa; margin-top: 2px; }
+.stock-bar { height: 6px; background: #eee; border-radius: 3px; overflow: hidden; width: 80px; margin-top: 5px; }
+.stock-fill { height: 100%; border-radius: 3px; }
+.badge { display: inline-block; padding: 3px 11px; border-radius: 20px; font-size: 11px; font-weight: 800; white-space: nowrap; }
+.b-orange { background: #fff3cd; color: #856404; border: 1px solid #fce08a; }
+.b-green { background: #d4edda; color: #155724; border: 1px solid #a9dfbf; }
+.b-red { background: #fde8e8; color: #c0392b; border: 1px solid #f5b7b1; }
+.btn { padding: 10px 22px; border-radius: 10px; font-size: 14px; font-weight: 800; font-family: 'Nunito', sans-serif; cursor: pointer; border: none; }
+.btn-blue { background: #4a7fd4; color: #fff; } .btn-blue:hover { background: #3a6fc4; }
+.btn-sm { padding: 6px 14px; font-size: 12px; border-radius: 8px; }
+.btn-outline { background: #fff; color: #4a7fd4; border: 1.5px solid #4a7fd4; }
+.btn-ghost { background: #f0f2f5; color: #1a1a2e; border: none; } .btn-ghost:hover { background: #e0e4ea; }
+.loading { text-align: center; padding: 30px; color: #888; font-weight: 700; }
+.error-msg { padding: 16px; color: #c0392b; font-weight: 700; background: #fde8e8; border-radius: 10px; text-align: center; }
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 100; align-items: center; justify-content: center; }
+.modal-overlay.open { display: flex; }
+.modal { background: #fff; border-radius: 18px; padding: 28px; width: 100%; max-width: 480px; box-shadow: 0 8px 40px rgba(0,0,0,.18); }
+.modal-title { font-size: 18px; font-weight: 800; margin-bottom: 20px; }
+.form-group { margin-bottom: 16px; }
+.form-label { font-size: 12px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: .4px; margin-bottom: 6px; display: block; }
+.form-input { width: 100%; padding: 10px 14px; border-radius: 10px; border: 1.5px solid #e0e0e0; font-size: 14px; font-family: 'Nunito', sans-serif; color: #1a1a2e; }
+.form-input:focus { outline: none; border-color: #4a7fd4; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+@media (max-width: 700px) { .stats { grid-template-columns: repeat(2,1fr); } }
+</style>
+<script src="api.js"></script>
+</head>
+<body>
+<header class="header">
+  <div class="logo">🐧 Penguin Auto</div>
+  <div class="h-right">
+    <span class="h-role">Owner</span>
+    <div class="h-avatar">PA</div>
+    <span class="h-name">Owner</span>
+    <button class="h-logout">Log Out</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="pg-head">
+    <div>
+      <div class="pg-title">Parts Inventory</div>
+      <div class="pg-sub">Track stock levels, vendors, and reorder alerts.</div>
+    </div>
+    <button class="btn btn-blue" onclick="openModal()">➕ Add New Part</button>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-icon">🔩</div><div class="stat-num" id="s-total">—</div><div class="stat-lbl">Total Parts</div></div>
+    <div class="stat"><div class="stat-icon">✅</div><div class="stat-num" id="s-instock" style="color:#155724">—</div><div class="stat-lbl">In Stock</div></div>
+    <div class="stat"><div class="stat-icon">⚠️</div><div class="stat-num" id="s-low" style="color:#856404">—</div><div class="stat-lbl">Low Stock</div></div>
+    <div class="stat"><div class="stat-icon">🚨</div><div class="stat-num" id="s-critical" style="color:#c0392b">—</div><div class="stat-lbl">Critical</div></div>
+  </div>
+
+  <div class="card">
+    <div class="search-bar">
+      <input class="search-input" type="text" placeholder="🔍  Search parts by name, number, or vendor..." oninput="searchParts(this.value)"/>
+    </div>
+    <div class="filter-tabs">
+      <button class="tab active" onclick="filterTab(this,'all')">All Parts</button>
+      <button class="tab" onclick="filterTab(this,'low')">Low Stock</button>
+      <button class="tab" onclick="filterTab(this,'critical')">Critical</button>
+    </div>
+    <div id="parts-container"><div class="loading">⏳ Loading parts...</div></div>
+  </div>
+</div>
+
+<!-- Add Part Modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-title" id="modal-title">➕ Add New Part</div>
+    <input type="hidden" id="edit-id"/>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Part Name</label><input class="form-input" id="f-name" placeholder="e.g. Oil Filter"/></div>
+      <div class="form-group"><label class="form-label">Part Number</label><input class="form-input" id="f-number" placeholder="e.g. OF-1234"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Vendor Name</label><input class="form-input" id="f-vendor" placeholder="Supplier name"/></div>
+      <div class="form-group"><label class="form-label">Vendor Contact</label><input class="form-input" id="f-contact" placeholder="Phone or email"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Unit Cost ($)</label><input class="form-input" id="f-cost" type="number" step="0.01" placeholder="0.00"/></div>
+      <div class="form-group"><label class="form-label">Qty on Hand</label><input class="form-input" id="f-qty" type="number" placeholder="0"/></div>
+    </div>
+    <div class="form-group"><label class="form-label">Reorder Threshold</label><input class="form-input" id="f-threshold" type="number" value="5"/></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline btn-sm" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-blue btn-sm" onclick="submitPart()">Save Part</button>
+    </div>
+  </div>
+</div>
+
+<script>
+
+let allParts = [], currentFilter = 'all', searchQuery = '';
+
+async function loadParts() {
+  try {
+    const res = await fetch(`${API}/parts`);
+    allParts = await res.json();
+    const low = allParts.filter(p => p.quantity_on_hand <= p.reorder_threshold);
+    const critical = allParts.filter(p => p.quantity_on_hand <= p.reorder_threshold && p.quantity_on_hand <= 3);
+    document.getElementById('s-total').textContent    = allParts.length;
+    document.getElementById('s-instock').textContent  = allParts.filter(p=>p.quantity_on_hand>p.reorder_threshold).length;
+    document.getElementById('s-low').textContent      = low.length;
+    document.getElementById('s-critical').textContent = critical.length;
+    renderParts();
+  } catch(e) {
+    document.getElementById('parts-container').innerHTML = '<div class="error-msg">❌ Cannot connect to backend.</div>';
+  }
+}
+
+function renderParts() {
+  let list = allParts;
+  if (searchQuery) list = list.filter(p => (p.part_name+p.part_number+p.vendor_name).toLowerCase().includes(searchQuery));
+  if (currentFilter === 'low')      list = list.filter(p => p.quantity_on_hand <= p.reorder_threshold*2 && p.quantity_on_hand > p.reorder_threshold);
+  if (currentFilter === 'critical') list = list.filter(p => p.quantity_on_hand <= p.reorder_threshold);
+
+  if (!list.length) { document.getElementById('parts-container').innerHTML = '<div class="loading">No parts found.</div>'; return; }
+
+  const getStatus = p => {
+    if (p.quantity_on_hand <= p.reorder_threshold) return ['b-red','Critical'];
+    if (p.quantity_on_hand <= p.reorder_threshold*2) return ['b-orange','Low Stock'];
+    return ['b-green','In Stock'];
+  };
+  const getFill = p => {
+    if (p.quantity_on_hand <= p.reorder_threshold) return ['#e74c3c', Math.min(100,p.quantity_on_hand/p.reorder_threshold*50)];
+    return ['#27ae60', 100];
+  };
+
+  document.getElementById('parts-container').innerHTML = `
+    <table class="parts-table">
+      <thead><tr><th>Part</th><th>Vendor</th><th>Unit Cost</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>
+        ${list.map(p => {
+          const [sc, sl] = getStatus(p);
+          const [fc, fw] = getFill(p);
+          return `<tr>
+            <td><div class="part-name">${p.part_name}</div><div class="part-num">${p.part_number||'—'}</div></td>
+            <td>${p.vendor_name}<br><span style="font-size:11px;color:#aaa">${p.vendor_contact||''}</span></td>
+            <td>$${parseFloat(p.unit_cost).toFixed(2)}</td>
+            <td><strong>${p.quantity_on_hand}</strong> / min ${p.reorder_threshold}<div class="stock-bar"><div class="stock-fill" style="width:${fw}%;background:${fc}"></div></div></td>
+            <td><span class="badge ${sc}">${sl}</span></td>
+            <td style="display:flex;gap:6px;padding-top:18px">
+              <button class="btn btn-ghost btn-sm" onclick="editPart(${p.part_id})">✏️ Edit</button>
+              <button class="btn ${sc==='b-red'||sc==='b-orange'?'btn-blue':'btn-outline'} btn-sm" onclick="restock(${p.part_id})">📦 ${sc==='b-red'?'Order Now':'Restock'}</button>
+            </td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>`;
+}
+
+function filterTab(el, f) {
+  currentFilter = f;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderParts();
+}
+
+function searchParts(q) { searchQuery = q.toLowerCase(); renderParts(); }
+
+function openModal(part) {
+  document.getElementById('modal-title').textContent = part ? '✏️ Edit Part' : '➕ Add New Part';
+  document.getElementById('edit-id').value    = part ? part.part_id : '';
+  document.getElementById('f-name').value     = part ? part.part_name : '';
+  document.getElementById('f-number').value   = part ? (part.part_number||'') : '';
+  document.getElementById('f-vendor').value   = part ? part.vendor_name : '';
+  document.getElementById('f-contact').value  = part ? (part.vendor_contact||'') : '';
+  document.getElementById('f-cost').value     = part ? part.unit_cost : '';
+  document.getElementById('f-qty').value      = part ? part.quantity_on_hand : '';
+  document.getElementById('f-threshold').value= part ? part.reorder_threshold : '5';
+  document.getElementById('modal').classList.add('open');
+}
+
+function editPart(id) { openModal(allParts.find(p=>p.part_id===id)); }
+
+async function restock(id) {
+  const p = allParts.find(x=>x.part_id===id);
+  const qty = prompt(`Restock "${p.part_name}"\nCurrent qty: ${p.quantity_on_hand}\nEnter new quantity:`);
+  if (qty === null || isNaN(qty)) return;
+  await fetch(`${API}/parts/${id}`, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({...p, quantity_on_hand: parseInt(qty)}) });
+  loadParts();
+}
+
+async function submitPart() {
+  const id = document.getElementById('edit-id').value;
+  const body = { part_name:document.getElementById('f-name').value, part_number:document.getElementById('f-number').value||null, vendor_name:document.getElementById('f-vendor').value, vendor_contact:document.getElementById('f-contact').value||null, unit_cost:+document.getElementById('f-cost').value, quantity_on_hand:+document.getElementById('f-qty').value, reorder_threshold:+document.getElementById('f-threshold').value };
+  const url  = id ? `${API}/parts/${id}` : `${API}/parts`;
+  const meth = id ? 'PUT' : 'POST';
+  await fetch(url, { method:meth, headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
+  closeModal(); loadParts();
+}
+
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+document.getElementById('modal').addEventListener('click',e=>{ if(e.target===document.getElementById('modal')) closeModal(); });
+loadParts();
+</script>
+</body>
+</html>

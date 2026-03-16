@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Penguin Auto — Technician View</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Nunito', sans-serif; background: #f0f2f5; color: #1a1a2e; }
+.header { background: #4a7fd4; height: 58px; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; box-shadow: 0 2px 12px rgba(74,127,212,.35); }
+.logo { font-size: 18px; font-weight: 800; color: #fff; }
+.h-right { display: flex; align-items: center; gap: 10px; }
+.h-avatar { width: 32px; height: 32px; background: rgba(255,255,255,.25); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: #fff; }
+.h-name { font-size: 13px; font-weight: 700; color: rgba(255,255,255,.9); }
+.h-logout { background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.3); color: #fff; padding: 4px 12px; border-radius: 7px; font-size: 12px; font-weight: 700; font-family: 'Nunito', sans-serif; cursor: pointer; }
+.h-role { background: rgba(255,255,255,.25); padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 800; color: #fff; }
+.wrap { max-width: 960px; margin: 0 auto; padding: 36px 24px; }
+.pg-head { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 28px; }
+.pg-title { font-size: 24px; font-weight: 800; }
+.pg-sub { font-size: 13px; color: #888; margin-top: 3px; }
+.stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 22px; }
+.stat { background: #fff; border-radius: 14px; padding: 22px 18px; text-align: center; box-shadow: 0 1px 8px rgba(0,0,0,.07); }
+.stat-icon { font-size: 28px; margin-bottom: 8px; }
+.stat-num { font-size: 30px; font-weight: 800; }
+.stat-lbl { font-size: 12px; color: #888; font-weight: 700; margin-top: 5px; text-transform: uppercase; letter-spacing: .4px; }
+.card { background: #fff; border-radius: 14px; padding: 22px; box-shadow: 0 1px 8px rgba(0,0,0,.07); margin-bottom: 22px; }
+.card-title { font-size: 14px; font-weight: 800; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1.5px solid #f0f2f5; display: flex; justify-content: space-between; align-items: center; }
+.filter-tabs { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
+.tab { padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 800; font-family: 'Nunito', sans-serif; cursor: pointer; border: 1.5px solid #e0e0e0; background: #fff; color: #888; transition: all .2s; }
+.tab.active { background: #4a7fd4; color: #fff; border-color: #4a7fd4; }
+.tab:hover:not(.active) { border-color: #4a7fd4; color: #4a7fd4; }
+.job-card { border: 1.5px solid #f0f2f5; border-radius: 14px; padding: 20px; margin-bottom: 14px; transition: border-color .2s; }
+.job-card:last-child { margin-bottom: 0; }
+.job-card.in-progress { border-color: #fce08a; background: #fffdf0; }
+.job-card.completed { border-color: #a9dfbf; background: #f6fff9; opacity: .88; }
+.job-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; gap: 10px; }
+.job-vehicle { font-size: 16px; font-weight: 800; color: #4a7fd4; }
+.job-service { font-size: 14px; font-weight: 700; margin-top: 2px; }
+.job-meta { font-size: 12px; color: #888; margin-top: 3px; }
+.parts-list { background: #f8f9fc; border-radius: 10px; padding: 12px 16px; margin: 12px 0; }
+.parts-list-title { font-size: 11px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: .4px; margin-bottom: 8px; }
+.part-item { display: flex; justify-content: space-between; font-size: 12px; padding: 4px 0; border-bottom: 1px solid #eee; }
+.part-item:last-child { border-bottom: none; }
+.part-item-name { font-weight: 700; }
+.notes-area { width: 100%; padding: 10px 14px; border-radius: 10px; border: 1.5px solid #e0e0e0; font-size: 13px; font-family: 'Nunito', sans-serif; resize: vertical; min-height: 60px; margin: 10px 0; }
+.notes-area:focus { outline: none; border-color: #4a7fd4; }
+.job-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; align-items: center; }
+.hours-input { padding: 6px 12px; border-radius: 8px; border: 1.5px solid #e0e0e0; font-size: 13px; font-weight: 700; font-family: 'Nunito', sans-serif; width: 80px; }
+.hours-input:focus { outline: none; border-color: #4a7fd4; }
+.badge { display: inline-block; padding: 3px 11px; border-radius: 20px; font-size: 11px; font-weight: 800; white-space: nowrap; }
+.b-orange { background: #fff3cd; color: #856404; border: 1px solid #fce08a; }
+.b-green { background: #d4edda; color: #155724; border: 1px solid #a9dfbf; }
+.b-blue { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+.b-gray { background: #f0f2f5; color: #888; border: 1px solid #ddd; }
+.btn { padding: 10px 22px; border-radius: 10px; font-size: 14px; font-weight: 800; font-family: 'Nunito', sans-serif; cursor: pointer; border: none; }
+.btn-blue { background: #4a7fd4; color: #fff; } .btn-blue:hover { background: #3a6fc4; }
+.btn-green { background: #27ae60; color: #fff; } .btn-green:hover { background: #229954; }
+.btn-orange { background: #f39c12; color: #fff; }
+.btn-ghost { background: #f0f2f5; color: #1a1a2e; border: none; }
+.btn-sm { padding: 6px 14px; font-size: 12px; border-radius: 8px; }
+.btn-outline { background: #fff; color: #4a7fd4; border: 1.5px solid #4a7fd4; }
+.loading { text-align: center; padding: 30px; color: #888; font-weight: 700; }
+.error-msg { padding: 16px; color: #c0392b; font-weight: 700; background: #fde8e8; border-radius: 10px; text-align: center; }
+/* Tech selector */
+.tech-bar { background: #fff; border-radius: 14px; padding: 18px 22px; box-shadow: 0 1px 8px rgba(0,0,0,.07); margin-bottom: 22px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.tech-bar label { font-size: 13px; font-weight: 800; color: #888; }
+.tech-select { padding: 8px 14px; border-radius: 10px; border: 1.5px solid #e0e0e0; font-size: 14px; font-family: 'Nunito', sans-serif; min-width: 200px; }
+.tech-select:focus { outline: none; border-color: #4a7fd4; }
+/* Add parts modal */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
+.modal-overlay.open { display: flex; }
+.modal { background: #fff; border-radius: 18px; padding: 28px; width: 100%; max-width: 460px; box-shadow: 0 8px 40px rgba(0,0,0,.18); }
+.modal-title { font-size: 18px; font-weight: 800; margin-bottom: 6px; }
+.modal-sub { font-size: 13px; color: #888; margin-bottom: 20px; }
+.form-group { margin-bottom: 16px; }
+.form-label { font-size: 12px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: .4px; margin-bottom: 6px; display: block; }
+.form-input, .form-select { width: 100%; padding: 10px 14px; border-radius: 10px; border: 1.5px solid #e0e0e0; font-size: 14px; font-family: 'Nunito', sans-serif; color: #1a1a2e; }
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+@media (max-width: 600px) { .stats { grid-template-columns: repeat(2,1fr); } }
+</style>
+<script src="api.js"></script>
+</head>
+<body>
+<header class="header">
+  <div class="logo">🐧 Penguin Auto</div>
+  <div class="h-right">
+    <span class="h-role">Technician</span>
+    <div class="h-avatar" id="h-avatar">?</div>
+    <span class="h-name" id="h-name">Select Technician</span>
+    <button class="h-logout">Log Out</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <!-- Technician selector -->
+  <div class="tech-bar">
+    <label>👤 Viewing as:</label>
+    <select class="tech-select" id="tech-select" onchange="switchTech(this.value)">
+      <option value="">— Select Technician —</option>
+    </select>
+  </div>
+
+  <div class="pg-head">
+    <div>
+      <div class="pg-title" id="pg-title">My Jobs — Today</div>
+      <div class="pg-sub" id="pg-sub">Select a technician above to view their assigned jobs.</div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-icon">📋</div><div class="stat-num" id="s-assigned">—</div><div class="stat-lbl">Assigned</div></div>
+    <div class="stat"><div class="stat-icon">🔧</div><div class="stat-num" id="s-progress" style="color:#856404">—</div><div class="stat-lbl">In Progress</div></div>
+    <div class="stat"><div class="stat-icon">✅</div><div class="stat-num" id="s-completed" style="color:#155724">—</div><div class="stat-lbl">Completed</div></div>
+    <div class="stat"><div class="stat-icon">⏱️</div><div class="stat-num" id="s-hours" style="font-size:22px">0h</div><div class="stat-lbl">Hours Logged</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span>Assigned Repair Orders</span>
+      <button class="btn btn-outline btn-sm" onclick="loadJobs()">🔄 Refresh</button>
+    </div>
+    <div class="filter-tabs">
+      <button class="tab active" onclick="filterTab(this,'all')">All</button>
+      <button class="tab" onclick="filterTab(this,'Planned')">Upcoming</button>
+      <button class="tab" onclick="filterTab(this,'In Progress')">In Progress</button>
+      <button class="tab" onclick="filterTab(this,'Completed')">Completed</button>
+    </div>
+    <div id="jobs-list"><div class="loading">👆 Select a technician to view their jobs.</div></div>
+  </div>
+</div>
+
+<!-- Add Parts Modal -->
+<div class="modal-overlay" id="parts-modal">
+  <div class="modal">
+    <div class="modal-title">🔩 Add Part to Job</div>
+    <div class="modal-sub" id="parts-modal-sub"></div>
+    <input type="hidden" id="pm-repair-id"/>
+    <div class="form-group">
+      <label class="form-label">Select Part</label>
+      <select class="form-select" id="pm-part"></select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Quantity</label>
+      <input class="form-input" type="number" id="pm-qty" value="1" min="1"/>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline btn-sm" onclick="closePartsModal()">Cancel</button>
+      <button class="btn btn-blue btn-sm" onclick="submitPart()">Add Part</button>
+    </div>
+  </div>
+</div>
+
+<script>
+
+let allJobs = [], currentFilter = 'all', currentTechId = null, allParts = [];
+
+const fmtDate = d => d ? new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '—';
+const fmtTime = t => { if(!t) return ''; const [h,m]=t.split(':'); const d=new Date(); d.setHours(h,m); return d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}); };
+
+// Load technicians into dropdown
+async function loadTechnicians() {
+  try {
+    const res = await fetch(`${API}/employees/active`);
+    const emps = await res.json();
+    document.getElementById('tech-select').innerHTML =
+      '<option value="">— Select Technician —</option>' +
+      emps.map(e=>`<option value="${e.employee_id}">${e.first_name} ${e.last_name} — ${e.position}</option>`).join('');
+  } catch(e) { console.error(e); }
+}
+
+async function switchTech(empId) {
+  if (!empId) return;
+  currentTechId = parseInt(empId);
+  const sel = document.getElementById('tech-select');
+  const name = sel.options[sel.selectedIndex].text.split(' — ')[0];
+  const initials = name.split(' ').map(n=>n[0]).join('').substring(0,2);
+  document.getElementById('h-avatar').textContent = initials;
+  document.getElementById('h-name').textContent   = name;
+  document.getElementById('pg-title').textContent = `${name}'s Jobs — Today`;
+  document.getElementById('pg-sub').textContent   = new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+  loadJobs();
+}
+
+async function loadJobs() {
+  if (!currentTechId) return;
+  document.getElementById('jobs-list').innerHTML = '<div class="loading">⏳ Loading jobs...</div>';
+  try {
+    const res = await fetch(`${API}/repairs`);
+    const repairs = await res.json();
+    allJobs = repairs.filter(r => r.employee_id === currentTechId);
+    // Stats
+    const totalHours = allJobs.filter(r=>r.labor_hours).reduce((s,r)=>s+parseFloat(r.labor_hours),0);
+    document.getElementById('s-assigned').textContent  = allJobs.length;
+    document.getElementById('s-progress').textContent  = allJobs.filter(r=>r.status==='In Progress').length;
+    document.getElementById('s-completed').textContent = allJobs.filter(r=>r.status==='Completed').length;
+    document.getElementById('s-hours').textContent     = totalHours.toFixed(1) + 'h';
+    renderJobs(currentFilter);
+  } catch(e) {
+    document.getElementById('jobs-list').innerHTML = '<div class="error-msg">❌ Cannot connect to backend.</div>';
+  }
+}
+
+function renderJobs(filter) {
+  const list = filter === 'all' ? allJobs : allJobs.filter(r=>r.status===filter);
+  if (!list.length) { document.getElementById('jobs-list').innerHTML = '<div class="loading">No jobs found for this filter.</div>'; return; }
+
+  document.getElementById('jobs-list').innerHTML = list.map(r => {
+    const isCompleted  = r.status === 'Completed';
+    const isInProgress = r.status === 'In Progress';
+    const isPlanned    = r.status === 'Planned';
+    const badgeCls = isCompleted ? 'b-green' : isInProgress ? 'b-orange' : 'b-blue';
+    const cardCls  = isCompleted ? 'completed' : isInProgress ? 'in-progress' : '';
+
+    return `<div class="job-card ${cardCls}" id="job-${r.repair_id}">
+      <div class="job-top">
+        <div>
+          <div class="job-vehicle">${r.year} ${r.make} ${r.model} — ${r.customer_name}</div>
+          <div class="job-service">🔧 ${r.service_name}</div>
+          <div class="job-meta">${fmtDate(r.scheduled_date)} · ${fmtTime(r.scheduled_time)} · VIN: ${r.vin_number}</div>
+        </div>
+        <span class="badge ${badgeCls}">${r.status}</span>
+      </div>
+
+      <div class="parts-list" id="parts-${r.repair_id}">
+        <div class="parts-list-title">Parts</div>
+        <div class="part-item"><span class="part-item-name" style="color:#aaa">Loading...</span></div>
+      </div>
+
+      ${r.notes ? `<div class="job-meta" style="margin:8px 0">📝 ${r.notes}</div>` : ''}
+
+      ${!isCompleted ? `
+        <textarea class="notes-area" id="notes-${r.repair_id}" placeholder="Add technician notes...">${r.notes||''}</textarea>
+        <div class="job-actions">
+          <label style="font-size:12px;font-weight:800;color:#888">Hours:</label>
+          <input class="hours-input" type="number" id="hours-${r.repair_id}" value="${r.labor_hours||0}" step="0.25" min="0"/>
+          <button class="btn btn-ghost btn-sm" onclick="openPartsModal(${r.repair_id},'${r.year} ${r.make} ${r.model}')">🔩 Add Part</button>
+          <button class="btn btn-orange btn-sm" onclick="saveNotes(${r.repair_id})">💾 Save</button>
+          ${isPlanned ? `<button class="btn btn-blue btn-sm" onclick="startJob(${r.repair_id})">▶️ Start Job</button>` : ''}
+          ${isInProgress ? `<button class="btn btn-green btn-sm" onclick="completeJob(${r.repair_id})">✅ Mark Complete</button>` : ''}
+        </div>` : `
+        <div class="job-meta" style="margin-top:8px;color:#155724">✅ Completed${r.completion_date?' on '+fmtDate(r.completion_date):''} · ${r.labor_hours||0} hrs logged</div>`}
+    </div>`;
+  }).join('');
+
+  // Load parts for each job
+  list.forEach(r => loadPartsForJob(r.repair_id));
+}
+
+async function loadPartsForJob(repairId) {
+  try {
+    const res = await fetch(`${API}/repair-parts/${repairId}`);
+    const parts = await res.json();
+    document.getElementById(`parts-${repairId}`).innerHTML =
+      `<div class="parts-list-title">Parts ${parts.length ? `(${parts.length})` : '— None assigned'}</div>` +
+      (parts.length ? parts.map(p=>`<div class="part-item"><span class="part-item-name">${p.part_name}</span><span class="part-item-qty">× ${p.quantity_used} — $${(p.quantity_used*p.unit_cost_at_time).toFixed(2)}</span></div>`).join('') : '<div class="part-item"><span style="color:#aaa">No parts added yet</span></div>');
+  } catch(e) {}
+}
+
+async function startJob(repairId) {
+  const r = allJobs.find(x=>x.repair_id===repairId);
+  await fetch(`${API}/repairs/${repairId}`, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({...r, status:'In Progress'}) });
+  loadJobs();
+}
+
+async function saveNotes(repairId) {
+  const r     = allJobs.find(x=>x.repair_id===repairId);
+  const notes = document.getElementById(`notes-${repairId}`).value;
+  const hours = parseFloat(document.getElementById(`hours-${repairId}`).value) || null;
+  await fetch(`${API}/repairs/${repairId}`, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({...r, notes, labor_hours:hours}) });
+  alert('✅ Notes saved!');
+}
+
+async function completeJob(repairId) {
+  const r     = allJobs.find(x=>x.repair_id===repairId);
+  const notes = document.getElementById(`notes-${repairId}`).value;
+  const hours = parseFloat(document.getElementById(`hours-${repairId}`).value) || null;
+  await fetch(`${API}/repairs/${repairId}`, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({...r, status:'Completed', completion_date: new Date().toISOString().split('T')[0], notes, labor_hours:hours}) });
+  loadJobs();
+}
+
+function filterTab(el, f) {
+  currentFilter = f;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderJobs(f);
+}
+
+async function openPartsModal(repairId, vehicleName) {
+  document.getElementById('pm-repair-id').value = repairId;
+  document.getElementById('parts-modal-sub').textContent = vehicleName;
+  if (!allParts.length) {
+    const res = await fetch(`${API}/parts`);
+    allParts = await res.json();
+  }
+  document.getElementById('pm-part').innerHTML = allParts.map(p=>`<option value="${p.part_id}">${p.part_name} — $${p.unit_cost} (${p.quantity_on_hand} in stock)</option>`).join('');
+  document.getElementById('parts-modal').classList.add('open');
+}
+
+async function submitPart() {
+  const repairId = parseInt(document.getElementById('pm-repair-id').value);
+  const partId   = parseInt(document.getElementById('pm-part').value);
+  const qty      = parseInt(document.getElementById('pm-qty').value) || 1;
+  await fetch(`${API}/repair-parts`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({repair_id:repairId, part_id:partId, quantity_used:qty}) });
+  closePartsModal();
+  loadPartsForJob(repairId);
+}
+
+function closePartsModal() { document.getElementById('parts-modal').classList.remove('open'); }
+document.getElementById('parts-modal').addEventListener('click',e=>{ if(e.target===document.getElementById('parts-modal')) closePartsModal(); });
+
+loadTechnicians();
+</script>
+</body>
+</html>

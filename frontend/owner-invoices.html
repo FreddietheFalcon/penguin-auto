@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Penguin Auto — Invoices</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Nunito', sans-serif; background: #f0f2f5; color: #1a1a2e; }
+.header { background: #4a7fd4; height: 58px; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; box-shadow: 0 2px 12px rgba(74,127,212,.35); }
+.logo { font-size: 18px; font-weight: 800; color: #fff; }
+.h-right { display: flex; align-items: center; gap: 10px; }
+.h-avatar { width: 32px; height: 32px; background: rgba(255,255,255,.25); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: #fff; }
+.h-name { font-size: 13px; font-weight: 700; color: rgba(255,255,255,.9); }
+.h-logout { background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.3); color: #fff; padding: 4px 12px; border-radius: 7px; font-size: 12px; font-weight: 700; font-family: 'Nunito', sans-serif; cursor: pointer; }
+.h-role { background: rgba(255,255,255,.25); padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 800; color: #fff; }
+.wrap { max-width: 1100px; margin: 0 auto; padding: 36px 24px; }
+.pg-head { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 28px; }
+.pg-title { font-size: 24px; font-weight: 800; }
+.pg-sub { font-size: 13px; color: #888; margin-top: 3px; }
+.stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 22px; }
+.stat { background: #fff; border-radius: 14px; padding: 22px 18px; text-align: center; box-shadow: 0 1px 8px rgba(0,0,0,.07); }
+.stat-icon { font-size: 28px; margin-bottom: 8px; }
+.stat-num { font-size: 30px; font-weight: 800; }
+.stat-lbl { font-size: 12px; color: #888; font-weight: 700; margin-top: 5px; text-transform: uppercase; letter-spacing: .4px; }
+.card { background: #fff; border-radius: 14px; padding: 22px; box-shadow: 0 1px 8px rgba(0,0,0,.07); margin-bottom: 22px; }
+.card-title { font-size: 14px; font-weight: 800; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1.5px solid #f0f2f5; display: flex; justify-content: space-between; align-items: center; }
+.filter-tabs { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
+.tab { padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 800; font-family: 'Nunito', sans-serif; cursor: pointer; border: 1.5px solid #e0e0e0; background: #fff; color: #888; transition: all .2s; }
+.tab.active { background: #4a7fd4; color: #fff; border-color: #4a7fd4; }
+.tab:hover:not(.active) { border-color: #4a7fd4; color: #4a7fd4; }
+.invoice-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 16px; }
+.invoice-card { border: 1.5px solid #f0f2f5; border-radius: 12px; padding: 18px; transition: all .2s; cursor: pointer; }
+.invoice-card:hover { border-color: #4a7fd4; box-shadow: 0 4px 16px rgba(74,127,212,.12); }
+.invoice-card.unpaid { border-color: #f5b7b1; background: #fffafa; }
+.invoice-card.pending { border-color: #fce08a; background: #fffdf0; }
+.inv-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+.inv-num { font-size: 13px; font-weight: 800; color: #4a7fd4; }
+.inv-date { font-size: 11px; color: #aaa; }
+.inv-customer { font-size: 15px; font-weight: 800; margin-bottom: 3px; }
+.inv-detail { font-size: 12px; color: #888; margin-bottom: 12px; }
+.inv-bottom { display: flex; justify-content: space-between; align-items: center; }
+.inv-total { font-size: 20px; font-weight: 800; }
+.inv-total.red { color: #e74c3c; }
+.inv-actions { display: flex; gap: 6px; }
+.badge { display: inline-block; padding: 3px 11px; border-radius: 20px; font-size: 11px; font-weight: 800; white-space: nowrap; }
+.b-orange { background: #fff3cd; color: #856404; border: 1px solid #fce08a; }
+.b-green { background: #d4edda; color: #155724; border: 1px solid #a9dfbf; }
+.b-red { background: #fde8e8; color: #c0392b; border: 1px solid #f5b7b1; }
+.b-blue { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+.btn { padding: 10px 22px; border-radius: 10px; font-size: 14px; font-weight: 800; font-family: 'Nunito', sans-serif; cursor: pointer; border: none; }
+.btn-blue { background: #4a7fd4; color: #fff; } .btn-blue:hover { background: #3a6fc4; }
+.btn-green { background: #27ae60; color: #fff; } .btn-green:hover { background: #229954; }
+.btn-sm { padding: 6px 14px; font-size: 12px; border-radius: 8px; }
+.btn-outline { background: #fff; color: #4a7fd4; border: 1.5px solid #4a7fd4; }
+.btn-ghost { background: #f0f2f5; color: #1a1a2e; border: none; }
+.loading { text-align: center; padding: 30px; color: #888; font-weight: 700; }
+.error-msg { padding: 16px; color: #c0392b; font-weight: 700; background: #fde8e8; border-radius: 10px; text-align: center; }
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
+.modal-overlay.open { display: flex; }
+.modal { background: #fff; border-radius: 18px; padding: 32px; width: 100%; max-width: 520px; box-shadow: 0 8px 40px rgba(0,0,0,.18); max-height: 90vh; overflow-y: auto; }
+.modal-title { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
+.modal-sub { font-size: 13px; color: #888; margin-bottom: 20px; }
+.inv-section { margin-bottom: 18px; padding-bottom: 18px; border-bottom: 1.5px solid #f0f2f5; }
+.inv-section:last-of-type { border-bottom: none; }
+.inv-section-title { font-size: 11px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: .4px; margin-bottom: 10px; }
+.inv-line { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 7px; }
+.inv-line span:first-child { color: #888; }
+.inv-line span:last-child { font-weight: 700; }
+.inv-parts-row { display: flex; justify-content: space-between; font-size: 13px; padding: 7px 0; border-bottom: 1px solid #f0f2f5; }
+.inv-parts-row:last-child { border-bottom: none; }
+.inv-total-row { display: flex; justify-content: space-between; font-size: 18px; font-weight: 800; padding-top: 12px; margin-top: 8px; border-top: 2px solid #1a1a2e; }
+.form-group { margin-bottom: 16px; }
+.form-label { font-size: 12px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: .4px; margin-bottom: 6px; display: block; }
+.form-input, .form-select { width: 100%; padding: 10px 14px; border-radius: 10px; border: 1.5px solid #e0e0e0; font-size: 14px; font-family: 'Nunito', sans-serif; color: #1a1a2e; }
+.form-input:focus, .form-select:focus { outline: none; border-color: #4a7fd4; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+@media (max-width: 700px) { .stats { grid-template-columns: repeat(2,1fr); } .invoice-grid { grid-template-columns: 1fr; } }
+</style>
+<script src="api.js"></script>
+</head>
+<body>
+<header class="header">
+  <div class="logo">🐧 Penguin Auto</div>
+  <div class="h-right">
+    <span class="h-role">Owner</span>
+    <div class="h-avatar">PA</div>
+    <span class="h-name">Owner</span>
+    <button class="h-logout">Log Out</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="pg-head">
+    <div>
+      <div class="pg-title">Invoices</div>
+      <div class="pg-sub">View, create, and manage all customer transactions.</div>
+    </div>
+    <button class="btn btn-blue" onclick="openCreateModal()">➕ Create Invoice</button>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-icon">🧾</div><div class="stat-num" id="s-total">—</div><div class="stat-lbl">Total</div></div>
+    <div class="stat"><div class="stat-icon">✅</div><div class="stat-num" id="s-paid" style="color:#155724">—</div><div class="stat-lbl">Paid</div></div>
+    <div class="stat"><div class="stat-icon">⏳</div><div class="stat-num" id="s-pending" style="color:#856404">—</div><div class="stat-lbl">Pending</div></div>
+    <div class="stat"><div class="stat-icon">💵</div><div class="stat-num" id="s-revenue" style="font-size:20px;color:#27ae60">—</div><div class="stat-lbl">Revenue</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span>All Invoices</span>
+      <button class="btn btn-outline btn-sm" onclick="loadTransactions()">🔄 Refresh</button>
+    </div>
+    <div class="filter-tabs">
+      <button class="tab active" onclick="filterTab(this,'all')">All</button>
+      <button class="tab" onclick="filterTab(this,'Paid')">Paid</button>
+      <button class="tab" onclick="filterTab(this,'Pending')">Pending</button>
+      <button class="tab" onclick="filterTab(this,'Refunded')">Refunded</button>
+    </div>
+    <div id="invoices-container"><div class="loading">⏳ Loading invoices...</div></div>
+  </div>
+</div>
+
+<!-- Invoice Detail Modal -->
+<div class="modal-overlay" id="detail-modal">
+  <div class="modal">
+    <div class="modal-title" id="d-invnum"></div>
+    <div class="modal-sub" id="d-date"></div>
+    <div class="inv-section">
+      <div class="inv-section-title">Customer & Vehicle</div>
+      <div class="inv-line"><span>Customer</span><span id="d-customer"></span></div>
+      <div class="inv-line"><span>Vehicle</span><span id="d-vehicle"></span></div>
+      <div class="inv-line"><span>Service</span><span id="d-service"></span></div>
+      <div class="inv-line"><span>Technician</span><span id="d-tech"></span></div>
+    </div>
+    <div class="inv-section">
+      <div class="inv-section-title">Parts Used</div>
+      <div id="d-parts"><em style="color:#aaa;font-size:13px">No parts recorded</em></div>
+    </div>
+    <div class="inv-section">
+      <div class="inv-section-title">Payment</div>
+      <div class="inv-line"><span>Method</span><span id="d-method"></span></div>
+      <div class="inv-line"><span>Status</span><span id="d-status"></span></div>
+      <div class="inv-total-row"><span>Total</span><span id="d-total"></span></div>
+    </div>
+    <div class="inv-section">
+      <div class="inv-section-title">Update Payment Status</div>
+      <div class="form-group">
+        <select class="form-select" id="d-new-status">
+          <option value="Pending">Pending</option>
+          <option value="Paid">Paid</option>
+          <option value="Refunded">Refunded</option>
+          <option value="Failed">Failed</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost btn-sm" onclick="closeDetailModal()">Close</button>
+      <button class="btn btn-green btn-sm" onclick="updateStatus()">💾 Update Status</button>
+    </div>
+  </div>
+</div>
+
+<!-- Create Invoice Modal -->
+<div class="modal-overlay" id="create-modal">
+  <div class="modal">
+    <div class="modal-title">➕ Create Invoice</div>
+    <div class="form-group">
+      <label class="form-label">Completed Repair</label>
+      <select class="form-select" id="c-repair"></select>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Total Amount ($)</label><input class="form-input" type="number" id="c-amount" step="0.01" placeholder="0.00"/></div>
+      <div class="form-group">
+        <label class="form-label">Payment Method</label>
+        <select class="form-select" id="c-method">
+          <option>Cash</option><option>Credit Card</option><option>Debit Card</option><option>Check</option><option>Other</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group"><label class="form-label">Notes (optional)</label><input class="form-input" type="text" id="c-notes" placeholder="Any notes..."/></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline btn-sm" onclick="closeCreateModal()">Cancel</button>
+      <button class="btn btn-blue btn-sm" onclick="submitInvoice()">Generate Invoice</button>
+    </div>
+  </div>
+</div>
+
+<script>
+
+let allTransactions = [], currentFilter = 'all', selectedTxId = null;
+
+const fmtDate = d => d ? new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
+const fmtMoney = n => '$' + parseFloat(n||0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');
+const badgeHtml = s => ({ Paid:'<span class="badge b-green">Paid</span>', Pending:'<span class="badge b-orange">Pending</span>', Refunded:'<span class="badge b-blue">Refunded</span>', Failed:'<span class="badge b-red">Failed</span>' }[s] || `<span class="badge b-gray">${s}</span>`);
+
+async function loadTransactions() {
+  document.getElementById('invoices-container').innerHTML = '<div class="loading">⏳ Loading...</div>';
+  try {
+    const res = await fetch(`${API}/transactions`);
+    allTransactions = await res.json();
+    const paid    = allTransactions.filter(t=>t.payment_status==='Paid');
+    const pending = allTransactions.filter(t=>t.payment_status==='Pending');
+    const revenue = paid.reduce((sum,t)=>sum+parseFloat(t.amount),0);
+    document.getElementById('s-total').textContent   = allTransactions.length;
+    document.getElementById('s-paid').textContent    = paid.length;
+    document.getElementById('s-pending').textContent = pending.length;
+    document.getElementById('s-revenue').textContent = fmtMoney(revenue);
+    renderInvoices(currentFilter);
+  } catch(e) {
+    document.getElementById('invoices-container').innerHTML = '<div class="error-msg">❌ Cannot connect to backend.</div>';
+  }
+}
+
+function renderInvoices(filter) {
+  const list = filter === 'all' ? allTransactions : allTransactions.filter(t=>t.payment_status===filter);
+  if (!list.length) { document.getElementById('invoices-container').innerHTML = '<div class="loading">No invoices found.</div>'; return; }
+  document.getElementById('invoices-container').innerHTML = `
+    <div class="invoice-grid">
+      ${list.map(t => {
+        const cls = t.payment_status==='Pending'?'pending': t.payment_status==='Failed'?'unpaid':'';
+        return `<div class="invoice-card ${cls}" onclick="openDetailModal(${t.transaction_id})">
+          <div class="inv-top">
+            <div class="inv-num">${t.invoice_number}</div>
+            ${badgeHtml(t.payment_status)}
+          </div>
+          <div class="inv-customer">${t.customer_name}</div>
+          <div class="inv-detail">${t.year} ${t.make} ${t.model} · ${t.service_name} · ${fmtDate(t.transaction_date)}</div>
+          <div class="inv-bottom">
+            <div class="inv-total ${t.payment_status==='Pending'||t.payment_status==='Failed'?'red':''}">${fmtMoney(t.amount)}</div>
+            <div class="inv-actions" onclick="event.stopPropagation()">
+              ${t.payment_status==='Pending' ? `<button class="btn btn-green btn-sm" onclick="quickPay(${t.transaction_id})">💳 Mark Paid</button>` : ''}
+              <button class="btn btn-ghost btn-sm">🖨 Print</button>
+            </div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
+}
+
+function filterTab(el, f) {
+  currentFilter = f;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderInvoices(f);
+}
+
+async function openDetailModal(id) {
+  selectedTxId = id;
+  try {
+    const res = await fetch(`${API}/transactions/${id}`);
+    const t = await res.json();
+    document.getElementById('d-invnum').textContent   = t.invoice_number;
+    document.getElementById('d-date').textContent     = fmtDate(t.transaction_date) + ' · ' + t.payment_status;
+    document.getElementById('d-customer').textContent = t.customer_name;
+    document.getElementById('d-vehicle').textContent  = `${t.year} ${t.make} ${t.model}`;
+    document.getElementById('d-service').textContent  = t.service_name;
+    document.getElementById('d-tech').textContent     = t.technician_name || '—';
+    document.getElementById('d-method').textContent   = t.payment_method;
+    document.getElementById('d-status').innerHTML     = badgeHtml(t.payment_status);
+    document.getElementById('d-total').textContent    = fmtMoney(t.amount);
+    document.getElementById('d-new-status').value     = t.payment_status;
+    document.getElementById('d-parts').innerHTML = t.parts && t.parts.length
+      ? t.parts.map(p=>`<div class="inv-parts-row"><span>${p.part_name} × ${p.quantity_used}</span><span>${fmtMoney(p.line_total)}</span></div>`).join('')
+      : '<em style="color:#aaa;font-size:13px">No parts recorded</em>';
+    document.getElementById('detail-modal').classList.add('open');
+  } catch(e) { alert('Could not load invoice details.'); }
+}
+
+async function updateStatus() {
+  const status = document.getElementById('d-new-status').value;
+  await fetch(`${API}/transactions/${selectedTxId}/status`, { method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify({payment_status:status}) });
+  closeDetailModal(); loadTransactions();
+}
+
+async function quickPay(id) {
+  await fetch(`${API}/transactions/${id}/status`, { method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify({payment_status:'Paid'}) });
+  loadTransactions();
+}
+
+async function openCreateModal() {
+  try {
+    const res = await fetch(`${API}/repairs`);
+    const repairs = await res.json();
+    const completed = repairs.filter(r=>r.status==='Completed');
+    document.getElementById('c-repair').innerHTML = completed.length
+      ? completed.map(r=>`<option value="${r.repair_id}">${r.year} ${r.make} ${r.model} — ${r.service_name} (${r.customer_name})</option>`).join('')
+      : '<option disabled>No completed repairs without invoices</option>';
+  } catch(e) {}
+  document.getElementById('create-modal').classList.add('open');
+}
+
+async function submitInvoice() {
+  const body = { repair_id:+document.getElementById('c-repair').value, amount:+document.getElementById('c-amount').value, payment_method:document.getElementById('c-method').value, notes:document.getElementById('c-notes').value||null };
+  await fetch(`${API}/transactions`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
+  closeCreateModal(); loadTransactions();
+}
+
+function closeDetailModal() { document.getElementById('detail-modal').classList.remove('open'); }
+function closeCreateModal() { document.getElementById('create-modal').classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('open'); }));
+loadTransactions();
+</script>
+</body>
+</html>

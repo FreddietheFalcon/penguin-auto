@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Penguin Auto — Owner Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Nunito', sans-serif; background: #f0f2f5; color: #1a1a2e; }
+.header { background: #4a7fd4; height: 58px; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; box-shadow: 0 2px 12px rgba(74,127,212,.35); }
+.logo { font-size: 18px; font-weight: 800; color: #fff; }
+.h-right { display: flex; align-items: center; gap: 10px; }
+.h-avatar { width: 32px; height: 32px; background: rgba(255,255,255,.25); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: #fff; }
+.h-name { font-size: 13px; font-weight: 700; color: rgba(255,255,255,.9); }
+.h-logout { background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.3); color: #fff; padding: 4px 12px; border-radius: 7px; font-size: 12px; font-weight: 700; font-family: 'Nunito', sans-serif; cursor: pointer; }
+.h-role { background: rgba(255,255,255,.25); padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 800; color: #fff; }
+.wrap { max-width: 1100px; margin: 0 auto; padding: 36px 24px; }
+.pg-head { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 28px; }
+.pg-title { font-size: 24px; font-weight: 800; }
+.pg-sub { font-size: 13px; color: #888; margin-top: 3px; }
+.stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 22px; }
+.stat { background: #fff; border-radius: 14px; padding: 22px 18px; text-align: center; box-shadow: 0 1px 8px rgba(0,0,0,.07); }
+.stat-icon { font-size: 28px; margin-bottom: 8px; }
+.stat-num { font-size: 30px; font-weight: 800; }
+.stat-lbl { font-size: 12px; color: #888; font-weight: 700; margin-top: 5px; text-transform: uppercase; letter-spacing: .4px; }
+.tiles { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 22px; }
+.tile { background: #fff; border-radius: 14px; padding: 28px 16px; text-align: center; box-shadow: 0 1px 8px rgba(0,0,0,.07); cursor: pointer; border: 2px solid transparent; transition: all .2s; text-decoration: none; color: #1a1a2e; display: block; }
+.tile:hover { border-color: #4a7fd4; box-shadow: 0 6px 20px rgba(74,127,212,.18); transform: translateY(-2px); }
+.tile-icon { font-size: 40px; margin-bottom: 12px; }
+.tile-label { font-size: 14px; font-weight: 800; }
+.card { background: #fff; border-radius: 14px; padding: 22px; box-shadow: 0 1px 8px rgba(0,0,0,.07); margin-bottom: 22px; }
+.card-title { font-size: 14px; font-weight: 800; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1.5px solid #f0f2f5; display: flex; justify-content: space-between; align-items: center; }
+.filter-tabs { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
+.tab { padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 800; font-family: 'Nunito', sans-serif; cursor: pointer; border: 1.5px solid #e0e0e0; background: #fff; color: #888; transition: all .2s; }
+.tab.active { background: #4a7fd4; color: #fff; border-color: #4a7fd4; }
+.tab:hover:not(.active) { border-color: #4a7fd4; color: #4a7fd4; }
+.repair-row { padding: 16px 0; border-bottom: 1px solid #f0f2f5; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.repair-row:last-child { border-bottom: none; padding-bottom: 0; }
+.repair-vehicle { font-size: 14px; font-weight: 800; color: #4a7fd4; }
+.repair-service { font-size: 13px; font-weight: 700; margin-top: 2px; }
+.repair-meta { font-size: 12px; color: #888; margin-top: 3px; }
+.repair-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.assign-select { padding: 5px 10px; border-radius: 8px; border: 1.5px solid #e0e0e0; font-size: 12px; font-weight: 700; font-family: 'Nunito', sans-serif; background: #fff; cursor: pointer; }
+.badge { display: inline-block; padding: 3px 11px; border-radius: 20px; font-size: 11px; font-weight: 800; white-space: nowrap; }
+.b-orange { background: #fff3cd; color: #856404; border: 1px solid #fce08a; }
+.b-green { background: #d4edda; color: #155724; border: 1px solid #a9dfbf; }
+.b-red { background: #fde8e8; color: #c0392b; border: 1px solid #f5b7b1; }
+.b-blue { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+.b-gray { background: #f0f2f5; color: #888; border: 1px solid #ddd; }
+.btn { padding: 10px 22px; border-radius: 10px; font-size: 14px; font-weight: 800; font-family: 'Nunito', sans-serif; cursor: pointer; border: none; }
+.btn-blue { background: #4a7fd4; color: #fff; } .btn-blue:hover { background: #3a6fc4; }
+.btn-green { background: #27ae60; color: #fff; } .btn-green:hover { background: #229954; }
+.btn-sm { padding: 6px 14px; font-size: 12px; border-radius: 8px; }
+.btn-outline { background: #fff; color: #4a7fd4; border: 1.5px solid #4a7fd4; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+.loading { text-align: center; padding: 30px; color: #888; font-weight: 700; }
+.error-msg { padding: 16px; color: #c0392b; font-weight: 700; background: #fde8e8; border-radius: 10px; text-align: center; }
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 100; align-items: center; justify-content: center; }
+.modal-overlay.open { display: flex; }
+.modal { background: #fff; border-radius: 18px; padding: 28px; width: 100%; max-width: 480px; box-shadow: 0 8px 40px rgba(0,0,0,.18); }
+.modal-title { font-size: 18px; font-weight: 800; margin-bottom: 20px; }
+.form-group { margin-bottom: 16px; }
+.form-label { font-size: 12px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: .4px; margin-bottom: 6px; display: block; }
+.form-input, .form-select { width: 100%; padding: 10px 14px; border-radius: 10px; border: 1.5px solid #e0e0e0; font-size: 14px; font-family: 'Nunito', sans-serif; color: #1a1a2e; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+@media (max-width: 700px) { .stats,.tiles { grid-template-columns: repeat(2,1fr); } .two-col { grid-template-columns: 1fr; } }
+</style>
+<script src="api.js"></script>
+</head>
+<body>
+<header class="header">
+  <div class="logo">🐧 Penguin Auto</div>
+  <div class="h-right">
+    <span class="h-role">Owner</span>
+    <div class="h-avatar">PA</div>
+    <span class="h-name">Owner</span>
+    <button class="h-logout">Log Out</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="pg-head">
+    <div>
+      <div class="pg-title">Owner Dashboard</div>
+      <div class="pg-sub" id="today-date"></div>
+    </div>
+    <button class="btn btn-blue" onclick="openModal()">➕ New Repair Order</button>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-icon">📋</div><div class="stat-num" id="s-total">—</div><div class="stat-lbl">Total Jobs</div></div>
+    <div class="stat"><div class="stat-icon">🔧</div><div class="stat-num" id="s-progress" style="color:#856404">—</div><div class="stat-lbl">In Progress</div></div>
+    <div class="stat"><div class="stat-icon">✅</div><div class="stat-num" id="s-completed" style="color:#155724">—</div><div class="stat-lbl">Completed</div></div>
+    <div class="stat"><div class="stat-icon">📅</div><div class="stat-num" id="s-planned" style="color:#1e40af">—</div><div class="stat-lbl">Planned</div></div>
+  </div>
+
+  <div class="tiles">
+    <a href="owner-parts.html" class="tile"><div class="tile-icon">🔩</div><div class="tile-label">Parts Inventory</div></a>
+    <a href="owner-invoices.html" class="tile"><div class="tile-icon">🧾</div><div class="tile-label">Invoices</div></a>
+    <a href="technician.html" class="tile"><div class="tile-icon">🔧</div><div class="tile-label">Technician View</div></a>
+    <a href="#" class="tile"><div class="tile-icon">👥</div><div class="tile-label">Employees</div></a>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span>Repair Orders</span>
+      <button class="btn btn-outline btn-sm" onclick="loadRepairs()">🔄 Refresh</button>
+    </div>
+    <div class="filter-tabs">
+      <button class="tab active" onclick="filterTab(this,'all')">All</button>
+      <button class="tab" onclick="filterTab(this,'Planned')">Planned</button>
+      <button class="tab" onclick="filterTab(this,'In Progress')">In Progress</button>
+      <button class="tab" onclick="filterTab(this,'Completed')">Completed</button>
+      <button class="tab" onclick="filterTab(this,'Cancelled')">Cancelled</button>
+    </div>
+    <div id="repairs-list"><div class="loading">⏳ Loading repairs...</div></div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">👥 Active Technicians</div>
+      <div id="employees-list"><div class="loading">⏳ Loading...</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">
+        <span>⚠️ Low Stock Alert</span>
+        <a href="owner-parts.html" style="font-size:12px;color:#4a7fd4;font-weight:700;text-decoration:none">View All →</a>
+      </div>
+      <div id="lowstock-list"><div class="loading">⏳ Loading...</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- New Repair Modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-title">➕ New Repair Order</div>
+    <div class="form-group"><label class="form-label">Vehicle</label><select class="form-select" id="m-vehicle"></select></div>
+    <div class="form-group"><label class="form-label">Service</label><select class="form-select" id="m-service"></select></div>
+    <div class="form-group"><label class="form-label">Assign Technician</label><select class="form-select" id="m-tech"><option value="">— Unassigned —</option></select></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Date</label><input class="form-input" type="date" id="m-date"/></div>
+      <div class="form-group"><label class="form-label">Time</label><input class="form-input" type="time" id="m-time" value="09:00"/></div>
+    </div>
+    <div class="form-group"><label class="form-label">Notes</label><input class="form-input" type="text" id="m-notes" placeholder="Optional..."/></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline btn-sm" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-blue btn-sm" onclick="submitRepair()">Create Order</button>
+    </div>
+  </div>
+</div>
+
+<script>
+
+let allRepairs = [], employees = [], currentFilter = 'all';
+
+const badgeHtml = s => ({ Planned:'<span class="badge b-blue">Planned</span>', 'In Progress':'<span class="badge b-orange">In Progress</span>', Completed:'<span class="badge b-green">Completed</span>', Cancelled:'<span class="badge b-gray">Cancelled</span>' }[s] || `<span class="badge b-gray">${s}</span>`);
+const fmtDate  = d => d ? new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
+const fmtTime  = t => { if(!t) return ''; const [h,m]=t.split(':'); const d=new Date(); d.setHours(h,m); return d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}); };
+
+async function loadRepairs() {
+  document.getElementById('repairs-list').innerHTML = '<div class="loading">⏳ Loading...</div>';
+  try {
+    const res = await fetch(`${API}/repairs`);
+    allRepairs = await res.json();
+    document.getElementById('s-total').textContent     = allRepairs.length;
+    document.getElementById('s-progress').textContent  = allRepairs.filter(r=>r.status==='In Progress').length;
+    document.getElementById('s-completed').textContent = allRepairs.filter(r=>r.status==='Completed').length;
+    document.getElementById('s-planned').textContent   = allRepairs.filter(r=>r.status==='Planned').length;
+    renderRepairs(currentFilter);
+  } catch(e) {
+    document.getElementById('repairs-list').innerHTML = '<div class="error-msg">❌ Cannot connect to backend. Make sure npm run dev is running.</div>';
+  }
+}
+
+function renderRepairs(filter) {
+  const list = filter === 'all' ? allRepairs : allRepairs.filter(r => r.status === filter);
+  if (!list.length) { document.getElementById('repairs-list').innerHTML = '<div class="loading">No repairs found.</div>'; return; }
+  document.getElementById('repairs-list').innerHTML = list.map(r => `
+    <div class="repair-row">
+      <div style="flex:1">
+        <div class="repair-vehicle">${r.year} ${r.make} ${r.model} — ${r.customer_name}</div>
+        <div class="repair-service">🔧 ${r.service_name}</div>
+        <div class="repair-meta">${fmtDate(r.scheduled_date)} · ${fmtTime(r.scheduled_time)} · Tech: ${r.technician_name || '⚠️ Unassigned'} · VIN: ${r.vin_number}</div>
+      </div>
+      <div class="repair-actions">
+        ${badgeHtml(r.status)}
+        ${r.status==='Planned' && !r.employee_id ? `<select class="assign-select" onchange="assignTech(${r.repair_id},this.value)"><option value="">Assign Tech</option>${employees.map(e=>`<option value="${e.employee_id}">${e.first_name} ${e.last_name}</option>`).join('')}</select>` : ''}
+        ${r.status==='In Progress' ? `<button class="btn btn-green btn-sm" onclick="markComplete(${r.repair_id})">✓ Complete</button>` : ''}
+        ${r.status==='Completed' ? `<a href="owner-invoices.html" class="btn btn-blue btn-sm">🧾 Invoice</a>` : ''}
+      </div>
+    </div>`).join('');
+}
+
+function filterTab(el, f) {
+  currentFilter = f;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderRepairs(f);
+}
+
+async function assignTech(repairId, employeeId) {
+  if (!employeeId) return;
+  await fetch(`${API}/repairs/${repairId}/assign`, { method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify({employee_id:employeeId}) });
+  loadRepairs();
+}
+
+async function markComplete(repairId) {
+  const r = allRepairs.find(x=>x.repair_id===repairId);
+  await fetch(`${API}/repairs/${repairId}`, { method:'PUT', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({...r, status:'Completed', completion_date: new Date().toISOString().split('T')[0]}) });
+  loadRepairs();
+}
+
+async function loadEmployees() {
+  try {
+    const res = await fetch(`${API}/employees/active`);
+    employees = await res.json();
+    document.getElementById('employees-list').innerHTML = !employees.length
+      ? '<div class="loading">No active employees.</div>'
+      : employees.map(e=>`<div class="repair-row"><div style="flex:1"><div class="repair-vehicle">${e.first_name} ${e.last_name}</div><div class="repair-meta">${e.position} · $${e.hourly_wage}/hr</div></div><span class="badge b-green">Active</span></div>`).join('');
+  } catch(e) { document.getElementById('employees-list').innerHTML = '<div class="error-msg">❌ Could not load employees.</div>'; }
+}
+
+async function loadLowStock() {
+  try {
+    const res = await fetch(`${API}/parts/low-stock`);
+    const parts = await res.json();
+    document.getElementById('lowstock-list').innerHTML = !parts.length
+      ? '<div class="loading" style="color:#155724">✅ All parts well stocked!</div>'
+      : parts.map(p=>`<div class="repair-row"><div style="flex:1"><div class="repair-vehicle">${p.part_name}</div><div class="repair-meta">${p.vendor_name} · $${p.unit_cost}/unit</div></div><span class="badge ${p.quantity_on_hand<=p.reorder_threshold?'b-red':'b-orange'}">${p.quantity_on_hand} Left</span></div>`).join('');
+  } catch(e) { document.getElementById('lowstock-list').innerHTML = '<div class="error-msg">❌ Could not load parts.</div>'; }
+}
+
+async function openModal() {
+  document.getElementById('m-date').value = new Date().toISOString().split('T')[0];
+  const [vRes, sRes] = await Promise.all([fetch(`${API}/vehicles`), fetch(`${API}/services/active`)]);
+  const vehicles = await vRes.json(), services = await sRes.json();
+  document.getElementById('m-vehicle').innerHTML = vehicles.map(v=>`<option value="${v.vehicle_id}">${v.year} ${v.make} ${v.model} — ${v.customer_name}</option>`).join('');
+  document.getElementById('m-service').innerHTML = services.map(s=>`<option value="${s.service_id}">${s.service_name} — $${s.hourly_rate}/hr</option>`).join('');
+  document.getElementById('m-tech').innerHTML = '<option value="">— Unassigned —</option>' + employees.map(e=>`<option value="${e.employee_id}">${e.first_name} ${e.last_name}</option>`).join('');
+  document.getElementById('modal').classList.add('open');
+}
+
+async function submitRepair() {
+  await fetch(`${API}/repairs`, { method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ vehicle_id:+document.getElementById('m-vehicle').value, service_id:+document.getElementById('m-service').value, employee_id:document.getElementById('m-tech').value||null, scheduled_date:document.getElementById('m-date').value, scheduled_time:document.getElementById('m-time').value, notes:document.getElementById('m-notes').value||null }) });
+  closeModal(); loadRepairs();
+}
+
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+document.getElementById('modal').addEventListener('click',e=>{ if(e.target===document.getElementById('modal')) closeModal(); });
+document.getElementById('today-date').textContent = new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'}) + ' · Manage repairs and operations.';
+loadEmployees().then(loadRepairs);
+loadLowStock();
+</script>
+</body>
+</html>
