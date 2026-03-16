@@ -21,13 +21,18 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-// Reliable __dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname  = path.dirname(__filename);
 
-// frontend is at: backend/src/server.js -> ../../.. -> penguin-auto -> ../frontend
-// backend/src -> backend -> penguin-auto -> frontend
-const FRONTEND_PATH = path.join(__dirname, "..", "..", "frontend");
+// On Railway: /app/backend/src/server.js
+// frontend is at: /app/frontend
+// So from /app/backend/src we go ../../.. to /app then ../frontend = /app/frontend
+// But simpler: just go up to the project root
+const PROJECT_ROOT  = path.join(__dirname, "..", "..");  // /app/backend -> /app
+const FRONTEND_PATH = path.join(PROJECT_ROOT, "frontend");
+
+console.log("Project root:", PROJECT_ROOT);
+console.log("Frontend path:", FRONTEND_PATH);
 
 // --- CORS ---
 const allowedOrigins = [
@@ -64,18 +69,21 @@ app.use("/api/transactions", transactionsRoutes);
 // --- Serve HTML frontend ---
 app.use(express.static(FRONTEND_PATH));
 
-// Fallback for unmatched routes
+// Fallback
 app.get("*", (req, res) => {
     const indexPath = path.join(FRONTEND_PATH, "index.html");
     res.sendFile(indexPath, err => {
-        if (err) res.status(404).send("Page not found. Make sure index.html exists in the frontend folder.");
+        if (err) {
+            console.error("Error serving file:", err);
+            res.status(404).send(`Page not found. Frontend path: ${FRONTEND_PATH}`);
+        }
     });
 });
 
-// --- Start server ---
+// --- Start ---
 connectDB().then(() => {
     app.listen(PORT, () => {
-        console.log(`Penguin Auto server running on port: ${PORT}`);
+        console.log(`Penguin Auto running on port: ${PORT}`);
         console.log(`Frontend path: ${FRONTEND_PATH}`);
     });
 });
