@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Penguin Auto — Home</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Nunito', sans-serif; background: #f0f2f5; color: #1a1a2e; }
+
+.header {
+  background: #4a7fd4; height: 58px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 28px;
+  box-shadow: 0 2px 12px rgba(74,127,212,.35);
+}
+.logo      { font-size: 18px; font-weight: 800; color: #fff; }
+.h-right   { display: flex; align-items: center; gap: 10px; }
+.h-avatar  { width: 32px; height: 32px; background: rgba(255,255,255,.25); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: #fff; }
+.h-name    { font-size: 13px; font-weight: 700; color: rgba(255,255,255,.9); }
+.h-logout  { background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.3); color: #fff; padding: 4px 12px; border-radius: 7px; font-size: 12px; font-weight: 700; font-family: 'Nunito', sans-serif; cursor: pointer; }
+
+.wrap { max-width: 960px; margin: 0 auto; padding: 36px 24px; }
+.pg-head { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 28px; }
+.pg-title { font-size: 24px; font-weight: 800; }
+.pg-sub   { font-size: 13px; color: #888; margin-top: 3px; }
+
+.stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 22px; }
+.stat  { background: #fff; border-radius: 14px; padding: 22px 18px; text-align: center; box-shadow: 0 1px 8px rgba(0,0,0,.07); }
+.stat-icon { font-size: 28px; margin-bottom: 8px; }
+.stat-num  { font-size: 30px; font-weight: 800; }
+.stat-lbl  { font-size: 12px; color: #888; font-weight: 700; margin-top: 5px; text-transform: uppercase; letter-spacing: .4px; }
+
+.tiles { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 22px; }
+.tile  { background: #fff; border-radius: 14px; padding: 28px 16px; text-align: center; box-shadow: 0 1px 8px rgba(0,0,0,.07); cursor: pointer; border: 2px solid transparent; transition: all .2s; text-decoration: none; color: #1a1a2e; display: block; }
+.tile:hover { border-color: #4a7fd4; box-shadow: 0 6px 20px rgba(74,127,212,.18); transform: translateY(-2px); }
+.tile-icon  { font-size: 40px; margin-bottom: 12px; }
+.tile-label { font-size: 14px; font-weight: 800; }
+
+.card { background: #fff; border-radius: 14px; padding: 22px; box-shadow: 0 1px 8px rgba(0,0,0,.07); margin-bottom: 22px; }
+.card-title { font-size: 14px; font-weight: 800; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1.5px solid #f0f2f5; display: flex; justify-content: space-between; align-items: center; }
+
+.appt-row { padding: 14px 0; border-bottom: 1px solid #f0f2f5; display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.appt-row:last-child { border-bottom: none; padding-bottom: 0; }
+.appt-vehicle { font-size: 14px; font-weight: 800; color: #4a7fd4; }
+.appt-meta    { font-size: 12px; color: #888; margin-top: 3px; }
+
+.prog-wrap { margin-top: 10px; }
+.prog-label { display: flex; justify-content: space-between; font-size: 12px; color: #888; margin-bottom: 4px; }
+.prog-bar  { height: 7px; background: #eee; border-radius: 4px; overflow: hidden; }
+.prog-fill { height: 100%; background: #4a7fd4; border-radius: 4px; }
+
+.badge { display: inline-block; padding: 3px 11px; border-radius: 20px; font-size: 11px; font-weight: 800; white-space: nowrap; }
+.b-orange { background: #fff3cd; color: #856404; border: 1px solid #fce08a; }
+.b-green  { background: #d4edda; color: #155724; border: 1px solid #a9dfbf; }
+.b-red    { background: #fde8e8; color: #c0392b; border: 1px solid #f5b7b1; }
+.b-blue   { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+
+.btn { padding: 10px 22px; border-radius: 10px; font-size: 14px; font-weight: 800; font-family: 'Nunito', sans-serif; cursor: pointer; border: none; }
+.btn-blue { background: #4a7fd4; color: #fff; }
+.btn-blue:hover { background: #3a6fc4; }
+.btn-sm { padding: 6px 14px; font-size: 12px; border-radius: 8px; }
+
+.loading { text-align: center; padding: 20px; color: #888; font-weight: 700; }
+
+/* Customer selector (for demo purposes) */
+.customer-bar { background: #fff; border-radius: 14px; padding: 16px 22px; box-shadow: 0 1px 8px rgba(0,0,0,.07); margin-bottom: 22px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.customer-bar label { font-size: 13px; font-weight: 800; color: #888; }
+.customer-select { padding: 8px 14px; border-radius: 10px; border: 1.5px solid #e0e0e0; font-size: 14px; font-family: 'Nunito', sans-serif; min-width: 200px; }
+.customer-select:focus { outline: none; border-color: #4a7fd4; }
+
+/* Schedule modal */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
+.modal-overlay.open { display: flex; }
+.modal { background: #fff; border-radius: 18px; padding: 28px; width: 100%; max-width: 480px; box-shadow: 0 8px 40px rgba(0,0,0,.18); }
+.modal-title { font-size: 18px; font-weight: 800; margin-bottom: 20px; }
+.form-group { margin-bottom: 16px; }
+.form-label { font-size: 12px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: .4px; margin-bottom: 6px; display: block; }
+.form-input, .form-select { width: 100%; padding: 10px 14px; border-radius: 10px; border: 1.5px solid #e0e0e0; font-size: 14px; font-family: 'Nunito', sans-serif; color: #1a1a2e; }
+.form-input:focus, .form-select:focus { outline: none; border-color: #4a7fd4; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+.btn-outline { background: #fff; color: #4a7fd4; border: 1.5px solid #4a7fd4; }
+
+@media (max-width: 600px) { .stats,.tiles { grid-template-columns: repeat(2,1fr); } }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">🐧 Penguin Auto</div>
+  <div class="h-right">
+    <div class="h-avatar" id="h-avatar">?</div>
+    <span class="h-name" id="h-name">Select Customer</span>
+    <button class="h-logout">Log Out</button>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- Customer selector (simulates login) -->
+  <div class="customer-bar">
+    <label>👤 Logged in as:</label>
+    <select class="customer-select" id="customer-select" onchange="switchCustomer(this.value)">
+      <option value="">— Select Customer —</option>
+    </select>
+  </div>
+
+  <div class="pg-head">
+    <div>
+      <div class="pg-title" id="welcome-title">Welcome!</div>
+      <div class="pg-sub">Here's your account overview.</div>
+    </div>
+    <button class="btn btn-blue" onclick="openScheduleModal()">📅 Schedule Service</button>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat"><div class="stat-icon">🚗</div><div class="stat-num" id="s-vehicles">—</div><div class="stat-lbl">Vehicles</div></div>
+    <div class="stat"><div class="stat-icon">📅</div><div class="stat-num" id="s-upcoming">—</div><div class="stat-lbl">Upcoming</div></div>
+    <div class="stat"><div class="stat-icon">🔧</div><div class="stat-num" id="s-progress">—</div><div class="stat-lbl">In Progress</div></div>
+    <div class="stat"><div class="stat-icon">💵</div><div class="stat-num" id="s-balance" style="font-size:22px;color:#e74c3c">—</div><div class="stat-lbl">Balance Due</div></div>
+  </div>
+
+  <!-- Quick nav tiles -->
+  <div class="tiles">
+    <div class="tile" onclick="openScheduleModal()"><div class="tile-icon">📅</div><div class="tile-label">Schedule Service</div></div>
+    <a href="customer-invoices.html" class="tile"><div class="tile-icon">💵</div><div class="tile-label">View Invoices</div></a>
+    <div class="tile" onclick="scrollToAppointments()"><div class="tile-icon">🕙</div><div class="tile-label">My Appointments</div></div>
+    <div class="tile" onclick="scrollToVehicles()"><div class="tile-icon">🚗</div><div class="tile-label">My Vehicles</div></div>
+  </div>
+
+  <!-- Recent Appointments -->
+  <div class="card" id="appointments-section">
+    <div class="card-title">
+      <span>Recent Appointments</span>
+      <button class="btn btn-outline btn-sm" onclick="loadCustomerData()">🔄 Refresh</button>
+    </div>
+    <div id="appointments-list"><div class="loading">👆 Select a customer above to view appointments.</div></div>
+  </div>
+
+  <!-- My Vehicles -->
+  <div class="card" id="vehicles-section">
+    <div class="card-title">My Vehicles</div>
+    <div id="vehicles-list"><div class="loading">👆 Select a customer above to view vehicles.</div></div>
+  </div>
+
+</div>
+
+<!-- Schedule Service Modal -->
+<div class="modal-overlay" id="schedule-modal">
+  <div class="modal">
+    <div class="modal-title">📅 Schedule a Service</div>
+    <div class="form-group">
+      <label class="form-label">Vehicle</label>
+      <select class="form-select" id="m-vehicle"><option value="">— Select your vehicle —</option></select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Service</label>
+      <select class="form-select" id="m-service"></select>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Date</label>
+        <input class="form-input" type="date" id="m-date"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Time</label>
+        <input class="form-input" type="time" id="m-time" value="09:00"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Notes (optional)</label>
+      <input class="form-input" type="text" id="m-notes" placeholder="Describe the issue..."/>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline btn-sm" onclick="closeScheduleModal()">Cancel</button>
+      <button class="btn btn-blue btn-sm" onclick="submitSchedule()">Book Appointment</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? 'http://localhost:5001/api'
+  : window.location.origin + '/api';
+
+let currentCustomerId = null;
+let customerVehicles  = [];
+
+const fmtDate = d => d ? new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
+const fmtTime = t => { if(!t) return ''; const [h,m]=t.split(':'); const d=new Date(); d.setHours(h,m); return d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'}); };
+const fmtMoney = n => '$' + parseFloat(n||0).toFixed(2);
+
+// Load customers into dropdown
+async function loadCustomers() {
+  try {
+    const res = await fetch(`${API}/customers`);
+    const customers = await res.json();
+    document.getElementById('customer-select').innerHTML =
+      '<option value="">— Select Customer —</option>' +
+      customers.map(c => `<option value="${c.customer_id}">${c.first_name} ${c.last_name}</option>`).join('');
+  } catch(e) { console.error('Could not load customers', e); }
+}
+
+async function switchCustomer(customerId) {
+  if (!customerId) return;
+  currentCustomerId = parseInt(customerId);
+  const sel  = document.getElementById('customer-select');
+  const name = sel.options[sel.selectedIndex].text;
+  const initials = name.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase();
+  document.getElementById('h-avatar').textContent      = initials;
+  document.getElementById('h-name').textContent        = name;
+  document.getElementById('welcome-title').textContent = `Welcome, ${name.split(' ')[0]}!`;
+  loadCustomerData();
+}
+
+async function loadCustomerData() {
+  if (!currentCustomerId) return;
+  await Promise.all([loadVehicles(), loadRepairs(), loadBalance()]);
+}
+
+async function loadVehicles() {
+  try {
+    const res = await fetch(`${API}/vehicles/customer/${currentCustomerId}`);
+    customerVehicles = await res.json();
+    document.getElementById('s-vehicles').textContent = customerVehicles.length;
+
+    document.getElementById('vehicles-list').innerHTML = !customerVehicles.length
+      ? '<div class="loading">No vehicles on file.</div>'
+      : customerVehicles.map(v => `
+          <div class="appt-row">
+            <div>
+              <div class="appt-vehicle">${v.year} ${v.make} ${v.model}</div>
+              <div class="appt-meta">${v.color || ''} · License: ${v.license_plate || '—'} · VIN: ${v.vin_number}</div>
+            </div>
+            <span class="badge b-blue">On File</span>
+          </div>`).join('');
+  } catch(e) { console.error(e); }
+}
+
+async function loadRepairs() {
+  try {
+    const res  = await fetch(`${API}/repairs`);
+    const all  = await res.json();
+    // Filter to only this customer's repairs
+    const mine = all.filter(r => customerVehicles.some(v => v.vehicle_id === r.vehicle_id));
+
+    const upcoming   = mine.filter(r => r.status === 'Planned');
+    const inProgress = mine.filter(r => r.status === 'In Progress');
+
+    document.getElementById('s-upcoming').textContent = upcoming.length;
+    document.getElementById('s-progress').textContent = inProgress.length;
+
+    if (!mine.length) {
+      document.getElementById('appointments-list').innerHTML = '<div class="loading">No appointments found.</div>';
+      return;
+    }
+
+    document.getElementById('appointments-list').innerHTML = mine.slice(0,5).map(r => {
+      const statusMap = { Planned:'b-blue', 'In Progress':'b-orange', Completed:'b-green', Cancelled:'b-gray' };
+      const isProgress = r.status === 'In Progress';
+      return `<div class="appt-row">
+        <div style="flex:1">
+          <div class="appt-vehicle">${r.year} ${r.make} ${r.model} — ${r.service_name}</div>
+          <div class="appt-meta">Tech: ${r.technician_name || 'Unassigned'} · ${fmtDate(r.scheduled_date)} · ${fmtTime(r.scheduled_time)}</div>
+          ${isProgress ? `<div class="prog-wrap">
+            <div class="prog-label"><span>Progress</span><span>In Progress</span></div>
+            <div class="prog-bar"><div class="prog-fill" style="width:60%"></div></div>
+          </div>` : ''}
+        </div>
+        <span class="badge ${statusMap[r.status]||'b-gray'}">${r.status}</span>
+      </div>`;
+    }).join('');
+  } catch(e) { console.error(e); }
+}
+
+async function loadBalance() {
+  try {
+    const res  = await fetch(`${API}/transactions`);
+    const all  = await res.json();
+    // Find pending transactions for this customer's vehicles
+    const mine = all.filter(t =>
+      customerVehicles.some(v => v.vehicle_id === t.vehicle_id) ||
+      t.customer_name === document.getElementById('h-name').textContent
+    );
+    const pending = mine.filter(t => t.payment_status === 'Pending');
+    const balance = pending.reduce((sum, t) => sum + parseFloat(t.amount||0), 0);
+    document.getElementById('s-balance').textContent = balance > 0 ? fmtMoney(balance) : '$0.00';
+    document.getElementById('s-balance').style.color = balance > 0 ? '#e74c3c' : '#155724';
+  } catch(e) {
+    document.getElementById('s-balance').textContent = '$0.00';
+  }
+}
+
+// Schedule modal
+async function openScheduleModal() {
+  if (!currentCustomerId) { alert('Please select a customer first.'); return; }
+  document.getElementById('m-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('m-vehicle').innerHTML =
+    '<option value="">— Select your vehicle —</option>' +
+    customerVehicles.map(v => `<option value="${v.vehicle_id}">${v.year} ${v.make} ${v.model}</option>`).join('');
+  try {
+    const res = await fetch(`${API}/services/active`);
+    const services = await res.json();
+    document.getElementById('m-service').innerHTML =
+      services.map(s => `<option value="${s.service_id}">${s.service_name} — $${s.hourly_rate}/hr (est. ${s.estimated_hours||'?'} hrs)</option>`).join('');
+  } catch(e) {}
+  document.getElementById('schedule-modal').classList.add('open');
+}
+
+async function submitSchedule() {
+  const vehicleId = document.getElementById('m-vehicle').value;
+  const serviceId = document.getElementById('m-service').value;
+  const date      = document.getElementById('m-date').value;
+  const time      = document.getElementById('m-time').value;
+  const notes     = document.getElementById('m-notes').value;
+
+  if (!vehicleId || !serviceId || !date || !time) {
+    alert('Please fill in all required fields.');
+    return;
+  }
+
+  try {
+    await fetch(`${API}/repairs`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ vehicle_id:+vehicleId, service_id:+serviceId, scheduled_date:date, scheduled_time:time, notes:notes||null })
+    });
+    closeScheduleModal();
+    loadCustomerData();
+    alert('✅ Appointment booked successfully!');
+  } catch(e) { alert('Error booking appointment.'); }
+}
+
+function closeScheduleModal() { document.getElementById('schedule-modal').classList.remove('open'); }
+document.getElementById('schedule-modal').addEventListener('click', e => { if(e.target===document.getElementById('schedule-modal')) closeScheduleModal(); });
+
+function scrollToAppointments() { document.getElementById('appointments-section').scrollIntoView({behavior:'smooth'}); }
+function scrollToVehicles()     { document.getElementById('vehicles-section').scrollIntoView({behavior:'smooth'}); }
+
+loadCustomers();
+</script>
+</body>
+</html>
